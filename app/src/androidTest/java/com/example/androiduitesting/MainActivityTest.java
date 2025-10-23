@@ -25,6 +25,14 @@ public class MainActivityTest {
     @Rule
     public ActivityScenarioRule<MainActivity> scenario = new ActivityScenarioRule<MainActivity>(MainActivity.class);
 
+    private void switchActivity() {
+        onView(withId(R.id.button_add)).perform(click());
+        onView(withId(R.id.editText_name)).perform(ViewActions.typeText("Edmonton"));
+        onView(withId(R.id.button_confirm)).perform(click());
+
+        onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.city_list)).atPosition(0).check(matches((withText("Edmonton")))).perform(click());
+    }
+
     @Test
     public void testAddCity(){
         // Click on Add City button
@@ -64,5 +72,26 @@ public class MainActivityTest {
         // If this data matches the text we provided then Voila! Our test should pass
         // You can also use anything() in place of is(instanceOf(String.class))
         onData(is(instanceOf(String.class))).inAdapterView(withId(R.id.city_list)).atPosition(0).check(matches((withText("Edmonton"))));
+    }
+
+    @Test
+    public void testActivitySwitched() {
+        switchActivity();
+
+        onView(withId(R.id.show_activity_fragment)).check(matches(isDisplayed()));
+    }
+
+    @Test
+    public void testBackButton() {
+        switchActivity();
+
+        onView(withId(R.id.show_activity_back)).perform(click());
+    }
+
+    @Test
+    public void testActivitySwitchConsistent() {
+        switchActivity();
+
+        onView(withText("Edmonton")).check(matches(isDisplayed()));
     }
 }
